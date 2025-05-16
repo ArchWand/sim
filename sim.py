@@ -25,7 +25,7 @@ print("SD:  ", sd)
 # print("Var: ", var)
 print()
 
-# plt.hist(data, bins=n, density=True)
+# plt.hist(data, bins=50, density=True)
 # plt.hist(list(range(len(data))), weights=data, bins=n, density=True)
 # plt.plot(sorted(data))
 # plt.scatter(data, range(len(data)))
