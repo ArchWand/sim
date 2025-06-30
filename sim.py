@@ -5,28 +5,32 @@ import random
 import math
 
 trials = 50000
-n = 50
+n = 5
 
 # 7 bag/laundry queue
 q = list(range(n))
 
+def preferred(x):
+    # Savor 0
+    return x != 0
+
 def sim(i):
-    print(f'{i}/{trials}', end='\r')
+    print(f'\r{i}/{trials}', end='')
     taken = list()
-    for _ in range(random.randint(15, 25)):
+    for _ in range(random.randint(1, 3)):
         x = q.pop(0)
         taken.append(x)
         yield x
     random.shuffle(taken)
-    bound = 15
-    one = [x for x in taken if x < bound]
-    two  = [x for x in taken if x >= bound]
+    one = [x for x in taken if preferred(x)]
+    two = [x for x in taken if not preferred(x)]
     q.extend(one)
     q.extend(two)
 
 data = [ x for i in range(trials) for x in sim(i) ]
-data = [ data.count(i) for i in range(n) ]
-print(q)
+print()
+
+data = [ data.count(i) / len(data) for i in range(n) ]
 print(data)
 
 avg = statistics.mean(data)
@@ -40,8 +44,8 @@ print("SD:  ", sd)
 # print("Var: ", var)
 print()
 
-# plt.hist(data, bins=50, density=True)
-plt.hist(list(range(len(data))), weights=data, bins=50, density=True)
+# plt.hist(data, bins=n)
+plt.hist(list(range(len(data))), weights=data, bins=n)
 # plt.plot(sorted(data))
 # plt.scatter(data, range(len(data)))
 plt.show()
