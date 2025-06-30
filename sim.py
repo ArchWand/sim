@@ -6,6 +6,8 @@ import math
 
 trials = 50000
 n = 5
+b = 0.25
+C = 0.45
 
 # 7 bag/laundry queue
 q = list(range(n))
@@ -16,11 +18,13 @@ def preferred(x):
 
 def sim(i):
     print(f'\r{i}/{trials}', end='')
+    # Take a load
     taken = list()
-    for _ in range(random.randint(1, 3)):
+    for _ in range(random.randint(1, 2)):
         x = q.pop(0)
         taken.append(x)
         yield x
+    # "Do laundry" - replace the taken load
     random.shuffle(taken)
     one = [x for x in taken if preferred(x)]
     two = [x for x in taken if not preferred(x)]
@@ -40,13 +44,13 @@ var = statistics.variance(data)
 
 print("Avg: ", avg)
 print("SD:  ", sd)
-# print("PSD: ", psd)
-# print("Var: ", var)
+print(avg - data[0])
+print(b/n * C)
 print()
 
 # plt.hist(data, bins=n)
-plt.hist(list(range(len(data))), weights=data, bins=n)
+# plt.hist(list(range(len(data))), weights=data, bins=n)
 # plt.plot(sorted(data))
 # plt.scatter(data, range(len(data)))
-plt.show()
+# plt.show()
 
