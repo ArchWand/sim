@@ -1,6 +1,3 @@
-import matplotlib.pyplot as plt
-import numpy as np
-import statistics
 import random
 import math
 import itertools
@@ -11,7 +8,7 @@ import itertools
 DEBUG = False
 NDEBUG = False
 
-trials = 2000
+trials = 1820
 n = 50
 
 class Infix:
@@ -36,15 +33,18 @@ def times(a, b): return a * b
 @infix
 def divide(a, b): return a / b if b != 0 else math.pi
 @infix
-def exp(a, b): return a ** b if a != 0 and b < 100 else math.pi
+def exp(a, b): return a ** b if a != 0 and a != 1 and b < 50 else math.pi
+@infix
+def mod(a, b): return a % b if b != 0 and a >= b else math.pi
 
-ops = [plus, minus, times, divide, exp]
+ops = [plus, minus, times, divide, exp, mod]
 op_names = {
     plus: "+",
     minus: "-", 
     times: "*",
     divide: "/",
     exp: "^",
+    mod: "%",
 }
 
 def solve(tup):
@@ -68,20 +68,26 @@ def solve(tup):
 	if NDEBUG: print(list(tup))
 	return False
 
-def sim(i):
+ABCD = 100000 * 4/52 * 4/51 * 4/50 * 4/49
+AABC = 100000 * 4/52 * 3/51 * 4/50 * 4/49 
+AABB = 100000 * 4/52 * 3/51 * 4/50 * 3/49
+AAAB = 100000 * 4/52 * 3/51 * 2/50 * 4/49
+AAAA = 100000 * 4/52 * 3/51 * 2/50 * 1/49
+
+count, total = 0, 0
+for i, tup in enumerate(itertools.combinations_with_replacement(list(range(1,14)), 4)):
     print(f'{i}/{trials}', end='\r')
-    expr = tuple(random.randint(1, 13) for _ in range(4))
-    return 1 if solve(expr) else 0
+    unique_counts = collections.Counter(tup)
+    counts = sorted(unique_counts.values(), reverse=True)
+    if counts == [4]:            p = AAAA
+    elif counts == [3, 1]:       p = AAAB
+    elif counts == [2, 2]:       p = AABB
+    elif counts == [2, 1, 1]:    p = AABC
+    else:                        p = ABCD
 
-data = [ sim(i) for i in range(trials) ]
-# print(data)
+    if solve(tup): count += p
+    total += p
 
-avg = statistics.mean(data)
-sd = statistics.stdev(data)
-psd = statistics.pstdev(data)
-var = statistics.variance(data)
-
-print("Avg: ", avg)
-print("SD:  ", sd)
+print(f"Solveable = {count/total}")
 print()
 
