@@ -8,8 +8,8 @@ import itertools
 DEBUG = False
 NDEBUG = False
 
-trials = 1820
-n = 50
+trials = 1000
+n = 1 # Number of decks of cards
 
 class Infix:
     def __init__(self, function):
@@ -68,25 +68,30 @@ def solve(tup):
 	if NDEBUG: print(list(tup))
 	return False
 
-ABCD = 100000 * 4/52 * 4/51 * 4/50 * 4/49
-AABC = 100000 * 4/52 * 3/51 * 4/50 * 4/49 
-AABB = 100000 * 4/52 * 3/51 * 4/50 * 3/49
-AAAB = 100000 * 4/52 * 3/51 * 2/50 * 4/49
-AAAA = 100000 * 4/52 * 3/51 * 2/50 * 1/49
+def draw_hands():
+    """Generator that simulates drawing 4-card hands from a deck."""
+    deck = list(range(1, 14)) * n
+    random.shuffle(deck)
+    index = 0
+    
+    while True:
+        # Shuffle when deck is empty or insufficient cards remain
+        if index + 4 > len(deck):
+            random.shuffle(deck)
+            index = 0
+        
+        # Draw 4 cards
+        hand = deck[index:index + 4]
+        index += 4
+        
+        yield tuple(hand)
 
+hands = draw_hands()
 count, total = 0, 0
-for i, tup in enumerate(itertools.combinations_with_replacement(list(range(1,14)), 4)):
+for i in range(trials):
     print(f'{i}/{trials}', end='\r')
-    unique_counts = collections.Counter(tup)
-    counts = sorted(unique_counts.values(), reverse=True)
-    if counts == [4]:            p = AAAA
-    elif counts == [3, 1]:       p = AAAB
-    elif counts == [2, 2]:       p = AABB
-    elif counts == [2, 1, 1]:    p = AABC
-    else:                        p = ABCD
-
-    if solve(tup): count += p
-    total += p
+    if solve(next(hands)): count += 1
+    total += 1
 
 print(f"Solveable = {count/total}")
 print()
