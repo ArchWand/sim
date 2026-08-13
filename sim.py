@@ -11,7 +11,7 @@ DEBUG = False
 NDEBUG = False
 UNARY = True
 
-trials = 1000
+trials = 2000
 n = 1 # Number of decks of cards
 
 # Binary functions
@@ -20,26 +20,27 @@ def plus(a, b): return a + b
 def minus(a, b): return a - b
 def times(a, b): return a * b
 def divide(a, b): return a / b if b != 0 and (a / b) > 1e-9 else False
-def exp(a, b): return a ** b if a > 1 and a < 100 and b < 30 else False
-def mod(a, b): return a % b if b != 0 and a >= b else False
+# def exp(a, b): return a ** b if a > 1 and a < 100 and b < 30 else False
+def exp(a, b): return a ** b if b == 2 or b == 3 else False
+# def mod(a, b): return a % b if b != 0 and a >= b else False
 
-ops = [plus, minus, times, divide, exp, ]
+ops = [plus, minus, times, divide, exp]
 op_names = {
     plus: "+",
     minus: "-", 
     times: "*",
     divide: "/",
     exp: "^",
-    mod: "%",
+    # mod: "%",
 }
 
 # Unary functions
 
 def sqrt(a):
     return math.sqrt(a) if a > 0 and a != 1 and a < sys.float_info.max else False
-def fact(a): return math.factorial(int(round(a))) if a >= 0 and a != 1 and abs(a - round(a)) < 1e-9 and a <= 50 else False
+def fact(a): return math.factorial(int(round(a))) if a >= 0 and a != 1 and a != 4 and abs(a - round(a)) < 1e-9 and a <= 50 else False
 
-unary_ops = [fact]
+unary_ops = [sqrt, fact]
 # Format: operation: (name, is_prefix)
 unary_op_names = {
     fact: ("!", False),
@@ -96,7 +97,7 @@ def solve(tup, one_sol=True, debug=DEBUG, ndebug=NDEBUG):
                 if one_sol: return True
                 else: sols.append(expr)
     if ndebug: print(list(tup))
-    return False if one_sol else sorted(sols, key=len)
+    return False if one_sol else sorted(sols, key=len, reverse=True)
 
 def solver(a, b, c, d):
     """
